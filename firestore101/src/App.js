@@ -15,14 +15,16 @@ class App extends Component {
       .get()
       .then(doc => this.setState({ title: doc.data().name }))
     db.collection('suggestions').onSnapshot(coll => {
-      const suggestions = coll.docs.map(doc => doc.data().name)
+      const suggestions = coll.docs.map(doc => doc.data())
       this.setState({ suggestions })
     })
   }
 
   handleSubmit = event => {
     event.preventDefault()
-    db.collection('suggestions').add({ name: this.titleName.value })
+    // db.collection('suggestions').add({ name: this.titleName.value })
+    const newSuggestion = db.collection('suggestions').doc()
+    newSuggestion.set({ name: this.titleName.value, id: newSuggestion.id })
     this.titleName.value = null
   }
 
@@ -37,7 +39,21 @@ class App extends Component {
         <ul>
           {this.state.suggestions &&
             this.state.suggestions.map((topic, index) => (
-              <li key={index}>{topic}</li>
+              <li key={index}>
+                {topic.name}
+                {topic.id && (
+                  <button
+                    onClick={() =>
+                      db
+                        .collection('suggestions')
+                        .doc(topic.id)
+                        .delete()
+                    }
+                  >
+                    Delete Me
+                  </button>
+                )}
+              </li>
             ))}
         </ul>
 
