@@ -17,7 +17,7 @@ class App extends Component {
 
   handleSubmit = event => {
     event.preventDefault()
-    db.doc('courses/online').set({ name: this.titleName.value })
+    db.collection('suggestions').add({ name: this.titleName.value })
     this.titleName.value = null
   }
 
