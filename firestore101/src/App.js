@@ -5,7 +5,8 @@ import { db } from './firebase'
 
 class App extends Component {
   state = {
-    title: 'Welcome to React'
+    title: 'Welcome to React',
+    suggestions: null
   }
 
   componentDidMount() {
@@ -13,6 +14,13 @@ class App extends Component {
       .doc('courses/online')
       .get()
       .then(doc => this.setState({ title: doc.data().name }))
+    db
+      .collection('suggestions')
+      .get()
+      .then(coll => {
+        const suggestions = coll.docs.map(doc => doc.data().name)
+        this.setState({ suggestions })
+      })
   }
 
   handleSubmit = event => {
@@ -28,9 +36,13 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">{this.state.title}</h1>
         </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+
+        <ul>
+          {this.state.suggestions &&
+            this.state.suggestions.map((topic, index) => (
+              <li key={index}>{topic}</li>
+            ))}
+        </ul>
 
         <form onSubmit={event => this.handleSubmit(event)}>
           <input
