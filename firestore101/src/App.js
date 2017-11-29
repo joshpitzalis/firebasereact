@@ -14,13 +14,10 @@ class App extends Component {
       .doc('courses/online')
       .get()
       .then(doc => this.setState({ title: doc.data().name }))
-    db
-      .collection('suggestions')
-      .get()
-      .then(coll => {
-        const suggestions = coll.docs.map(doc => doc.data().name)
-        this.setState({ suggestions })
-      })
+    db.collection('suggestions').onSnapshot(coll => {
+      const suggestions = coll.docs.map(doc => doc.data().name)
+      this.setState({ suggestions })
+    })
   }
 
   handleSubmit = event => {
